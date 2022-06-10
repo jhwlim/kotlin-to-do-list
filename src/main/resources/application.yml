@@ -1,1 +1,17 @@
+spring:
+  profiles:
+    active: local
 
+  datasource:
+    url: # url
+    driverClassName: # driver-class-name
+    username: # username
+    password: # password
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
