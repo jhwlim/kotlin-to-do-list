@@ -25,6 +25,11 @@ class TaskController(
         return TaskListResponse.from(taskService.getTask())
     }
 
+    @GetMapping("/{taskId}")
+    fun getTaskById(@PathVariable taskId: Long): TaskDto {
+        return taskService.getTaskById(taskId)
+    }
+
     @PostMapping
     fun saveTask(@RequestBody @Valid request: TaskSaveRequest): ResponseEntity<TaskDto> {
         log.info("task save request : {}", request)

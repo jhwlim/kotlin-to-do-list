@@ -5,6 +5,7 @@ import com.example.common.enums.ErrorType
 import com.example.common.enums.TaskStatus
 import com.example.controller.task.request.CategorySaveRequest
 import com.example.controller.task.request.TaskSaveRequest
+import com.example.exception.TaskNotFoundException
 import com.example.model.category.CategoryDto
 import com.example.model.task.TaskDto
 import com.example.service.TaskService
@@ -22,6 +23,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -74,7 +76,8 @@ internal class TaskControllerTest {
             post("/tasks")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+                .content(objectMapper.writeValueAsString(request))
+        )
             .andDo(print())
             .andExpect(status().isCreated)
             .andReturn()
@@ -113,13 +116,65 @@ internal class TaskControllerTest {
             post("/tasks")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+                .content(objectMapper.writeValueAsString(request))
+        )
             .andDo(print())
             .andExpect(status().isBadRequest)
             .andReturn()
 
-        val actualResponse: ErrorResponse = objectMapper.readValue(mvcResult.response.contentAsString, ErrorResponse::class.java)
+        val actualResponse = objectMapper.readValue(mvcResult.response.contentAsString, ErrorResponse::class.java)
         assertThat(actualResponse.code).isEqualTo(ErrorType.INVALID_REQUEST.code)
+    }
+
+    @DisplayName("Task 상세 조회 - 200")
+    @Test
+    fun getTaskById() {
+        val taskId = 1L
+        val category = CategoryDto(
+            id = 1L,
+            name = "Category"
+        )
+        val task = TaskDto(
+            id = taskId,
+            name = "Task",
+            status = TaskStatus.PLANNING,
+            createdDtm = LocalDateTime.now(),
+            category = category,
+        )
+
+        every { taskService.getTaskById(taskId) } returns task
+
+        val mvcResult = mockMvc.perform(
+            get("/tasks/${taskId}")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andReturn()
+
+        val actualResponse = objectMapper.readValue(mvcResult.response.contentAsString, TaskDto::class.java)
+        assertThat(actualResponse).isEqualTo(task)
+    }
+
+    @DisplayName("Task 상세 조회 - 404")
+    @Test
+    fun getTaskById_whenTaskNotFound() {
+        val taskId = 1L
+
+        every { taskService.getTaskById(taskId) } throws TaskNotFoundException()
+
+        val mvcResult = mockMvc.perform(
+            get("/tasks/${taskId}")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andDo(print())
+            .andExpect(status().isNotFound)
+            .andReturn()
+
+        val actualResponse = objectMapper.readValue(mvcResult.response.contentAsString, ErrorResponse::class.java)
+        assertThat(actualResponse.code).isEqualTo(ErrorType.TASK_NOT_FOUND.code)
+
+
     }
 
 }
