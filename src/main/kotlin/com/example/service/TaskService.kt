@@ -37,6 +37,7 @@ class TaskService(
             createdDtm = LocalDateTime.now(),
         ))
         savedCategory.addTasks(savedTask)
+        log.info("[Success] Save Task")
         return TaskDto.of(savedTask, savedCategory)
     }
 
@@ -69,6 +70,13 @@ class TaskService(
         }
         log.info("[Success] Update Task")
         return TaskDto.of(updatedTask, updatedTask.category!!)
+    }
+
+    @Transactional
+    fun removeTask(taskId: Long) {
+        val savedTask = getTaskByIdOrThrow(taskId)
+        taskRepository.delete(savedTask)
+        log.info("[Success] Remove Task")
     }
 
 }

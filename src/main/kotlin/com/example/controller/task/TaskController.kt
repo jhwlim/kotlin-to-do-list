@@ -46,4 +46,14 @@ class TaskController(
         return taskService.updateTask(taskId, request.toTask())
     }
 
+    @DeleteMapping("/{taskId}")
+    fun removeTask(
+        @PathVariable taskId: Long
+    ): ResponseEntity<Unit> {
+        log.info("[Request] task delete request - taskId : {}", taskId)
+        taskService.removeTask(taskId)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+            .build()
+    }
+
 }
