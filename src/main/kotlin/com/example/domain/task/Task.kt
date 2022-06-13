@@ -18,8 +18,6 @@ open class Task(
     open var createdDtm: LocalDateTime,
     open var modifiedDtm: LocalDateTime? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     open var category: Category? = null,
-) {
-
-}
+)
