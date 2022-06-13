@@ -20,4 +20,9 @@ open class Category (
         task.category = this
     }
 
+    fun removeTask(task: Task) {
+        this.tasks?.remove(task)
+        task.category = null
+    }
+
 }

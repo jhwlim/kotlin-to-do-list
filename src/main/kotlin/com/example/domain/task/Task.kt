@@ -2,6 +2,7 @@ package com.example.domain.task
 
 import com.example.common.enums.TaskStatus
 import com.example.domain.category.Category
+import com.example.model.task.TaskDto
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -20,4 +21,13 @@ open class Task(
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     open var category: Category? = null,
-)
+) {
+
+    fun update(task: TaskDto) {
+        this.name = name
+        this.description = task.description
+        this.status = task.status
+        this.modifiedDtm = LocalDateTime.now()
+    }
+
+}

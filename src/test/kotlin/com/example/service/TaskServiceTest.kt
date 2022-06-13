@@ -102,4 +102,160 @@ internal class TaskServiceTest {
         assertThatExceptionOfType(TaskNotFoundException::class.java).isThrownBy { taskService.getTaskById(taskId) }
     }
 
+    @DisplayName("Task 수정 (Only Task) - 성공")
+    @Test
+    fun updateTask_whenUpdateOnlyTask() {
+        val taskId = 1L
+        val request = TaskDto(
+            name = "Update Task",
+            status = TaskStatus.PLANNING,
+            description = "Task Updated!!!",
+            category = CategoryDto(
+                name = "Category"
+            )
+        )
+        val savedCategory = Category(
+            id = 1L,
+            name = "Category",
+        )
+        val savedTask = Task(
+            id = taskId,
+            name = "Task",
+            status = TaskStatus.IN_PROGRESS,
+            createdDtm = LocalDateTime.now(),
+            category = savedCategory
+        )
+        val updatedTask = Task(
+            id = taskId,
+            name = request.name,
+            status = request.status,
+            description = request.description,
+            createdDtm = savedTask.createdDtm,
+            modifiedDtm = LocalDateTime.now(),
+            category = savedCategory
+        )
+        every { taskRepository.findByIdOrNull(taskId) } returns savedTask
+        every { taskRepository.save(savedTask) } returns updatedTask
+
+        val actual = taskService.updateTask(taskId, request)
+        assertThat(actual.id).isEqualTo(taskId)
+        assertThat(actual.name).isEqualTo(request.name)
+        assertThat(actual.status).isEqualTo(request.status)
+        assertThat(actual.description).isEqualTo(request.description)
+        assertThat(actual.createdDtm).isEqualTo(updatedTask.createdDtm)
+        assertThat(actual.modifiedDtm).isEqualTo(updatedTask.modifiedDtm)
+
+        val actualCategory = actual.category!!
+        assertThat(actualCategory.id).isEqualTo(savedTask.category!!.id)
+        assertThat(actualCategory.name).isEqualTo(savedTask.category!!.name)
+    }
+
+    @DisplayName("Task 수정 (Only Category) - 성공 (등록된 Category로 수정하는 경우)")
+    @Test
+    fun updateTask_whenUpdateOnlyCategory() {
+        val taskId = 1L
+        val request = TaskDto(
+            name = "Task",
+            status = TaskStatus.IN_PROGRESS,
+            description = "Task Updated!!!",
+            category = CategoryDto(
+                name = "Update Category"
+            )
+        )
+        val savedCategory = Category(
+            id = 1L,
+            name = "Category",
+        )
+        val savedTask = Task(
+            id = taskId,
+            name = "Task",
+            status = TaskStatus.IN_PROGRESS,
+            createdDtm = LocalDateTime.now(),
+            category = savedCategory
+        )
+        val anotherSavedCategory = Category(
+            id = 2L,
+            name = request.name
+        )
+        val updatedTask = Task(
+            id = taskId,
+            name = request.name,
+            status = request.status,
+            description = request.description,
+            createdDtm = savedTask.createdDtm,
+            modifiedDtm = LocalDateTime.now(),
+            category = anotherSavedCategory
+        )
+        every { taskRepository.findByIdOrNull(taskId) } returns savedTask
+        every { taskRepository.save(savedTask) } returns updatedTask
+        every { categoryRepository.findByName(any()) } answers { anotherSavedCategory }
+
+        val actual = taskService.updateTask(taskId, request)
+        assertThat(actual.id).isEqualTo(taskId)
+        assertThat(actual.name).isEqualTo(request.name)
+        assertThat(actual.status).isEqualTo(request.status)
+        assertThat(actual.description).isEqualTo(request.description)
+        assertThat(actual.createdDtm).isEqualTo(updatedTask.createdDtm)
+        assertThat(actual.modifiedDtm).isEqualTo(updatedTask.modifiedDtm)
+
+        val actualCategory = actual.category!!
+        assertThat(actualCategory.id).isEqualTo(anotherSavedCategory.id)
+        assertThat(actualCategory.name).isEqualTo(anotherSavedCategory.name)
+    }
+
+
+    @DisplayName("Task 수정 (Only Category) - 성공 (등록된 Category가 아닌 Category로 수정하는 경우)")
+    @Test
+    fun updateTask_whenUpdateOnlyCategoryAndSaveNewCategory() {
+        val taskId = 1L
+        val request = TaskDto(
+            name = "Task",
+            status = TaskStatus.IN_PROGRESS,
+            description = "Task Updated!!!",
+            category = CategoryDto(
+                name = "Update Category"
+            )
+        )
+        val savedCategory = Category(
+            id = 1L,
+            name = "Category",
+        )
+        val savedTask = Task(
+            id = taskId,
+            name = "Task",
+            status = TaskStatus.IN_PROGRESS,
+            createdDtm = LocalDateTime.now(),
+            category = savedCategory
+        )
+        val newCategory = Category(
+            id = 2L,
+            name = request.name
+        )
+        val updatedTask = Task(
+            id = taskId,
+            name = request.name,
+            status = request.status,
+            description = request.description,
+            createdDtm = savedTask.createdDtm,
+            modifiedDtm = LocalDateTime.now(),
+            category = newCategory
+        )
+        every { taskRepository.findByIdOrNull(taskId) } returns savedTask
+        every { taskRepository.save(savedTask) } returns updatedTask
+        every { categoryRepository.findByName(any()) } returns null
+        every { categoryRepository.save(any()) } returns newCategory
+
+        val actual = taskService.updateTask(taskId, request)
+        assertThat(actual.id).isEqualTo(taskId)
+        assertThat(actual.name).isEqualTo(request.name)
+        assertThat(actual.status).isEqualTo(request.status)
+        assertThat(actual.description).isEqualTo(request.description)
+        assertThat(actual.createdDtm).isEqualTo(updatedTask.createdDtm)
+        assertThat(actual.modifiedDtm).isEqualTo(updatedTask.modifiedDtm)
+
+        val actualCategory = actual.category!!
+        assertThat(actualCategory.id).isEqualTo(newCategory.id)
+        assertThat(actualCategory.name).isEqualTo(newCategory.name)
+    }
+
 }
