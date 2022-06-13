@@ -32,9 +32,18 @@ class TaskController(
 
     @PostMapping
     fun saveTask(@RequestBody @Valid request: TaskSaveRequest): ResponseEntity<TaskDto> {
-        log.info("task save request : {}", request)
+        log.info("[Request] task save request : {}", request)
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(taskService.saveTask(request.toTask()))
+    }
+
+    @PutMapping("/{taskId}")
+    fun updateTask(
+        @PathVariable taskId: Long,
+        @RequestBody @Valid request: TaskSaveRequest
+    ): TaskDto {
+        log.info("[Request] task update request : {}", request)
+        return taskService.updateTask(taskId, request.toTask())
     }
 
 }
