@@ -3,6 +3,7 @@ package com.example.domain.task
 import com.example.common.enums.TaskStatus
 import com.example.domain.category.Category
 import com.example.domain.category.CategoryRepository
+import com.example.domain.task.projections.TaskListItemProjection
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -47,6 +48,16 @@ internal class TaskRepositoryTest {
             assertThat(category).isNotNull
             assertThat(category!!.name).isEqualTo("카테고리1")
         }
+    }
+
+    @DisplayName("Task 목록 조회 - TaskListItemProjection")
+    @Test
+    @Sql("/sql/tasks.sql")
+    fun findAll_whenTaskListItemProjection() {
+        val list = taskRepository.findAllByOrderByCreatedDtmDesc(TaskListItemProjection::class.java)
+        assertThat(list.size).isEqualTo(2)
+        assertThat(list[0].getId()).isEqualTo(2L)
+        assertThat(list[1].getId()).isEqualTo(1L)
     }
 
 }
