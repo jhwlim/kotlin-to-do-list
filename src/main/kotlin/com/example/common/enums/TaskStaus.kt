@@ -6,5 +6,5 @@ enum class TaskStatus (
     PLANNING("Planning"),
     IN_PROGRESS("In Progress"),
     COMPLETE("Complete"),
-    Holding("Holding"),
+    HOLDING("Holding"),
 }
