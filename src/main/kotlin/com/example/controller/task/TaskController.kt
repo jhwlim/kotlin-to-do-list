@@ -1,15 +1,13 @@
 package com.example.controller.task
 
 import com.example.controller.task.request.TaskSaveRequest
+import com.example.controller.task.response.TaskListResponse
 import com.example.model.task.TaskDto
 import com.example.service.TaskService
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
@@ -20,6 +18,11 @@ class TaskController(
 
     companion object {
         private val log = LoggerFactory.getLogger(TaskController.Companion::class.java)
+    }
+
+    @GetMapping
+    fun getTasks(): TaskListResponse {
+        return TaskListResponse.from(taskService.getTask())
     }
 
     @PostMapping

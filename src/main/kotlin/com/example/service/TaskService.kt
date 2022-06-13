@@ -4,6 +4,7 @@ import com.example.domain.category.Category
 import com.example.domain.category.CategoryRepository
 import com.example.domain.task.Task
 import com.example.domain.task.TaskRepository
+import com.example.domain.task.projections.TaskListItemProjection
 import com.example.model.task.TaskDto
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -28,6 +29,10 @@ class TaskService(
         ))
         savedCategory.addTasks(savedTask)
         return TaskDto.of(savedTask, savedCategory)
+    }
+
+    fun getTask(): List<TaskDto> {
+        return TaskDto.list(taskRepository.findAllByOrderByCreatedDtmDesc(TaskListItemProjection::class.java))
     }
 
 }
