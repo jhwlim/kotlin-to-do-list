@@ -5,7 +5,9 @@ import com.example.domain.category.CategoryRepository
 import com.example.domain.task.Task
 import com.example.domain.task.TaskRepository
 import com.example.domain.task.projections.TaskListItemProjection
+import com.example.exception.TaskNotFoundException
 import com.example.model.task.TaskDto
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -33,6 +35,11 @@ class TaskService(
 
     fun getTask(): List<TaskDto> {
         return TaskDto.list(taskRepository.findAllByOrderByCreatedDtmDesc(TaskListItemProjection::class.java))
+    }
+
+    fun getTaskById(id: Long): TaskDto {
+        val task = taskRepository.findByIdOrNull(id) ?: throw TaskNotFoundException()
+        return TaskDto.of(task, task.category!!)
     }
 
 }
