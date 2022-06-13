@@ -4,20 +4,6 @@ import com.example.common.enums.TaskStatus
 import com.example.model.category.CategoryDto
 import com.example.model.task.TaskDto
 
-data class TaskListResponse(
-    val tasks: List<TaskListItemResponse>
-) {
-
-    companion object {
-
-        fun from(tasks: List<TaskDto>): TaskListResponse {
-            return TaskListResponse(tasks = TaskListItemResponse.list(tasks))
-        }
-
-    }
-
-}
-
 data class TaskListItemResponse(
     val id: Long,
     val name: String,

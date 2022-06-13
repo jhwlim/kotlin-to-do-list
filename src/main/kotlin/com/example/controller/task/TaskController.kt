@@ -1,7 +1,7 @@
 package com.example.controller.task
 
 import com.example.controller.task.request.TaskSaveRequest
-import com.example.controller.task.response.TaskListResponse
+import com.example.controller.task.response.TaskListItemResponse
 import com.example.model.task.TaskDto
 import com.example.service.TaskService
 import org.slf4j.LoggerFactory
@@ -21,8 +21,8 @@ class TaskController(
     }
 
     @GetMapping
-    fun getTasks(): TaskListResponse {
-        return TaskListResponse.from(taskService.getTask())
+    fun getTasks(): List<TaskListItemResponse> {
+        return TaskListItemResponse.list(taskService.getTask())
     }
 
     @GetMapping("/{taskId}")
