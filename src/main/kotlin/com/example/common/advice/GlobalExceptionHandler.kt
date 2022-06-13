@@ -17,6 +17,14 @@ class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(BaseException::class)
+    fun handleBaseException(e: BaseException): ResponseEntity<ErrorResponse> {
+        log.warn("[Service] : {}", e)
+        return ResponseEntity
+            .status(e.httpStatus)
+            .body(ErrorResponse.from(e.errorType))
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleInvalidRequestException(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
         log.warn("[Invalid Request] : {}", e.fieldErrors)
