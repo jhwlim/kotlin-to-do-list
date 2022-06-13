@@ -24,6 +24,7 @@ dependencies {
 	implementation("mysql:mysql-connector-java")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("com.h2database:h2")
+	testImplementation("io.mockk:mockk:1.11.0")
 }
 
 tasks.withType<KotlinCompile> {
