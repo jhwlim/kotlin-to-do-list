@@ -3,7 +3,6 @@ package com.example.controller.task
 import com.example.common.advice.ErrorResponse
 import com.example.common.enums.ErrorType
 import com.example.common.enums.TaskStatus
-import com.example.controller.task.request.CategorySaveRequest
 import com.example.controller.task.request.TaskSaveRequest
 import com.example.exception.TaskNotFoundException
 import com.example.model.category.CategoryDto
@@ -53,7 +52,7 @@ internal class TaskControllerTest {
         val request = TaskSaveRequest(
             name = "Task",
             status = TaskStatus.PLANNING,
-            category = CategorySaveRequest(
+            category = TaskSaveRequest.CategorySaveRequest(
                 name = "Category"
             )
         )
@@ -107,7 +106,7 @@ internal class TaskControllerTest {
         val request = TaskSaveRequest(
             name = taskName,
             status = taskStatus,
-            category = CategorySaveRequest(
+            category = TaskSaveRequest.CategorySaveRequest(
                 name = categoryName
             )
         )

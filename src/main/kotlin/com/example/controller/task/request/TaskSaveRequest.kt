@@ -26,15 +26,15 @@ data class TaskSaveRequest(
         )
     }
 
-}
+    data class CategorySaveRequest(
+        @field:NotBlank
+        val name: String? = null,
+    ) {
 
-data class CategorySaveRequest(
-    @field:NotBlank
-    val name: String? = null,
-) {
+        fun toCategory(): CategoryDto {
+            return CategoryDto(name = name!!)
+        }
 
-    fun toCategory(): CategoryDto {
-        return CategoryDto(name = name!!)
     }
 
 }
