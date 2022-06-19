@@ -28,20 +28,20 @@ data class TaskListItemResponse(
 
     }
 
-}
+    data class TaskListItemCategoryResponse(
+        val id: Long,
+        val name: String,
+    ) {
 
-data class TaskListItemCategoryResponse(
-    val id: Long,
-    val name: String,
-) {
+        companion object {
 
-    companion object {
+            fun from(category: CategoryDto): TaskListItemCategoryResponse {
+                return TaskListItemCategoryResponse(
+                    id = category.id!!,
+                    name = category.name,
+                )
+            }
 
-        fun from(category: CategoryDto): TaskListItemCategoryResponse {
-            return TaskListItemCategoryResponse(
-                id = category.id!!,
-                name = category.name,
-            )
         }
 
     }
